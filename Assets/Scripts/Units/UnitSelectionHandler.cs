@@ -5,11 +5,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class UnitSelectionHandler : MonoBehaviour {
-
     [SerializeField] private LayerMask layerMask = new LayerMask();
 
     private Camera mainCamera;
-    private List<Unit> selectedUnits = new List<Unit>();
+    public List<Unit> SelectedUnits { get; } = new List<Unit>();
 
     void Start() {
         mainCamera = Camera.main;
@@ -30,18 +29,18 @@ public class UnitSelectionHandler : MonoBehaviour {
         if(!hit.collider.TryGetComponent<Unit>(out Unit unit)) { return; }
         if(!unit.hasAuthority) { return; }
 
-        selectedUnits.Add(unit);
+        SelectedUnits.Add(unit);
 
-        foreach(Unit selectedUnit in selectedUnits) {
+        foreach(Unit selectedUnit in SelectedUnits) {
             selectedUnit.Select();
         }
     }
 
     private void DontKnow() {
-        foreach(Unit selectedUnit in selectedUnits) {
+        foreach(Unit selectedUnit in SelectedUnits) {
             selectedUnit.Deselect();
         }
 
-        selectedUnits.Clear();
+        SelectedUnits.Clear();
     }
 }
