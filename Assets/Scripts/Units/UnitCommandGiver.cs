@@ -18,14 +18,24 @@ public class UnitCommandGiver : MonoBehaviour {
         if(!Mouse.current.rightButton.wasPressedThisFrame) { return; }
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         if(!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; }
-
+        if(hit.collider.TryGetComponent<Targetable>(out Targetable target)) {
+            if(!target.hasAuthority) {
+                TryTarget(target);
+                return;
+            }
+        }
         TryMove(hit.point);
     }
 
-    private void TryMove(Vector3 point)
-    {
+    private void TryMove(Vector3 point) {
         foreach(Unit unit in unitSelectionHandler.SelectedUnits) {
             unit.GetUnitMovement().CmdMove(point);
+        }
+    }
+
+    private void TryTarget(Targetable target) {
+        foreach(Unit unit in unitSelectionHandler.SelectedUnits) {
+            unit.GetTargeter().CmdSetTarget(target.gameObject);
         }
     }
 }
